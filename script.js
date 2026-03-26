@@ -68,10 +68,8 @@ function windowResized() {
     initWaves();
 }
 
-// ====== ЛОГИКА ИНТЕРАКТИВА ======
 document.addEventListener('DOMContentLoaded', () => {
 
-    /* --- 1. ПАЗЛ --- */
     const pieces = document.querySelectorAll('.piece');
     const dropZone = document.getElementById('drop-zone');
     const skullComplete = document.getElementById('skull-complete');
@@ -104,7 +102,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /* --- 2. ИГРА В НАПЕРСТКИ --- */
     const items = Array.from(document.querySelectorAll('.game-item-smooth'));
     const modal = document.getElementById('game-modal');
     const taskText = document.getElementById('game-task');
@@ -138,11 +135,11 @@ targetItem = targets[Math.floor(Math.random() * targets.length)];
         if(modal) modal.classList.remove('hidden');
     }
 
-    // Следим за всей секцией, чтобы игра не зависала
     const screen3 = document.querySelector('.screen-3');
     if(screen3) {
         const observer = new IntersectionObserver((entries) => {
-            if(entries[0].isIntersecting && !isPlaying && modal && modal.classList.contains('hidden') && resultModal && resultModal.classList.contains('hidden')) {
+            let isResultHidden = resultModal ? resultModal.classList.contains('hidden') : true;
+            if(entries[0].isIntersecting && !isPlaying && modal && modal.classList.contains('hidden') && isResultHidden) {
                 startShellGame();
             }
         }, { threshold: 0.3 });
@@ -216,7 +213,6 @@ targetItem = targets[Math.floor(Math.random() * targets.length)];
         }, 300);
     }
 
-    /* --- 3. РАСПУТЫВАНИЕ КЛУБКА (P5.JS INSTANCE MODE) --- */
     const tangleContainer = document.getElementById('tangle-container');
     if(tangleContainer) {
         const tangleSketch = (p) => {
@@ -229,7 +225,8 @@ targetItem = targets[Math.floor(Math.random() * targets.length)];
             const maxClicks = 3;    
 
             p.setup = () => {
-                p.createCanvas(tangleContainer.clientWidth, tangleContainer.clientHeight);
+                let h = tangleContainer.clientHeight > 0 ? tangleContainer.clientHeight : 400;
+                p.createCanvas(tangleContainer.clientWidth, h);
                 p.stroke(0); 
                 p.strokeWeight(4); 
                 p.noFill();
@@ -242,7 +239,53 @@ targetItem = targets[Math.floor(Math.random() * targets.length)];
                 for (let i = 0; i < numPoints; i++) {
                     let t = p.map(i, 0, numPoints, 0, p.TWO_PI * 10);
                     let tangleX = p.width / 2 + p.sin(t * 1.3) * (p.width * 0.3) + p.noise(i * 0.1) * 50 - 25;
+                    let tangleY = p.height / 2 + p.cos(t * 1.7) * (p.height * 0.4) + p.noise(i * 0.1 + 100) * 50 - 25;
+                    
+                    let straightX = p.map(i, 0, numPoints, 20, p.width - 20);
+                    let straightY = p.height / 2 + p.sin(i * 0.1) * 20;
 
+                    points.push({
+                        tX: tangleX, tY: tangleY,
+                        sX: straightX, sY: straightY
+                    });
+                }
+            }
 
-let tangleY = p.height / 2 + p.cos(t * 1.7) * (p.height * 0.4) + p.noise(i * 0.1 + 100) * 50 - 25;
-                }}}}})
+            p.draw = () => {
+                p.clear();
+                
+                pullProgress = p.lerp(pullProgress, targetProgress, 0.08);
+
+                p.beginShape();
+                for (let i = 0; i < points.length; i++) {
+                    let pt = points[i];
+                    let noiseX = (1 - pullProgress) * (p.noise(i * 0.1, p.frameCount * 0.01) * 20 - 10);
+                    let noiseY = (1 - pullProgress) * (p.noise(i * 0.1 + 100, p.frameCount * 0.01) * 20 - 10);
+
+                    let x = p.lerp(pt.tX + noiseX, pt.sX, pullProgress);
+                    let y = p.lerp(pt.tY + noiseY, pt.sY, pullProgress);
+                    p.vertex(x, y);
+                }
+                p.endShape();
+            };
+
+            p.mousePressed = () => {
+                if (p.mouseX >= 0 && p.mouseX <= p.width && p.mouseY >= 0 && p.mouseY <= p.height) {
+                    if (clickCount < maxClicks) {
+                        clickCount++;
+                        targetProgress = clickCount / maxClicks;
+                    }
+                }
+            };
+            
+            p.windowResized = () => {
+                if (tangleContainer.clientWidth > 0) {
+                    let h = tangleContainer.clientHeight > 0 ? tangleContainer.clientHeight : 400;
+                    p.resizeCanvas(tangleContainer.clientWidth, h);
+                    generatePoints();
+                }
+            };
+        };
+        new p5(tangleSketch, tangleContainer);
+    }
+});

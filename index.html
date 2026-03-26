@@ -12,23 +12,34 @@
         <div class="title">
             <p>PALACE</p>
         </div>
+        <div class="title2">
+            <p>PA</p>
+            <p>LA</p>
+            <p>CE</p>
+        </div>
     </section>
 
     <section class="screen screen-2">
-        <div class="cherep-title">
+        <div class = "title3">
+            <div class = "cherep">
             <p>ЧЕРЕП</p>
         </div>
-        
+        <div class = " cherep reverse">
+            <p>ЧЕРЕП</p>
+        </div>
+        </div>
+
         <div class="puzzle-container">
-            <div class="drop-zone" id="drop-zone">
-                <img src="assets/skull-complete.svg" id="skull-complete" class="hidden" alt="full skull">
-            </div>
             <div class="puzzle-pieces" id="puzzle-pieces">
                 <img src="assets/piece1.svg" class="piece" draggable="true" id="p1" alt="part">
                 <img src="assets/piece2.svg" class="piece" draggable="true" id="p2" alt="part">
                 <img src="assets/piece3.svg" class="piece" draggable="true" id="p3" alt="part">
                 <img src="assets/piece4.svg" class="piece" draggable="true" id="p4" alt="part">
             </div>
+            <div class="drop-zone" id="drop-zone">
+                <img src="assets/skull-complete.svg" id="skull-complete" class="hidden" alt="full skull">
+            </div>
+
         </div>
     </section>
 
@@ -38,6 +49,11 @@
     <div id="game-modal" class="modal hidden">
         <p id="game-task">Найди: Кота</p>
         <button id="start-game-btn">Начать</button>
+    </div>
+
+    <div id="result-modal" class="modal hidden">
+        <h2 id="result-title"></h2>
+        <p id="result-text"></p>
     </div>
 
     <div class="game-area-smooth" id="game-area">
