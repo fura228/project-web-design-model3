@@ -8,22 +8,29 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
 </head>
 <body>
-    <div class="title">
-        <p>PALACE</p>
-    </div>
-    <section class="screen screen-2">
-    <div class="cherep-title">
-        <img src="cherep-text.svg" alt="Череп"> 
-    </div>
-    
-    <div class="puzzle-container">
-        <div class="drop-zone" id="drop-zone">
-            <img src="skull-complete.svg" id="skull-complete" class="hidden" alt="full skull">
+    <section class = "screen">
+        <div class="title">
+            <p>PALACE</p>
         </div>
-        <div class="puzzle-pieces" id="puzzle-pieces">
+    </section>
+
+    <section class="screen screen-2">
+        <div class="cherep-title">
+            <p>ЧЕРЕП</p>
+        </div>
+        
+        <div class="puzzle-container">
+            <div class="drop-zone" id="drop-zone">
+                <img src="assets/skull-complete.svg" id="skull-complete" class="hidden" alt="full skull">
             </div>
-    </div>
-</section>
+            <div class="puzzle-pieces" id="puzzle-pieces">
+                <img src="assets/piece1.svg" class="piece" draggable="true" id="p1" alt="part">
+                <img src="assets/piece2.svg" class="piece" draggable="true" id="p2" alt="part">
+                <img src="assets/piece3.svg" class="piece" draggable="true" id="p3" alt="part">
+                <img src="assets/piece4.svg" class="piece" draggable="true" id="p4" alt="part">
+            </div>
+        </div>
+    </section>
 
 <section class="screen screen-3">
     <div class="agnosia-bg-text">АГНОЗИЯ</div>
@@ -44,8 +51,6 @@
     <div class="therapy-bg-text">ТЕРАПИЯ</div>
     
     <div class="tangle-container" id="tangle-container">
-        <img src="assets/10684cce-815b-4b6e-805e-b03fa627b2c7-Photoroom 3.svg" id="tangle-svg" class="tangle" alt="tangle">
-        <img src="straight-line.svg" id="straight-svg" class="straight" alt="straight line">
     </div>
 </section>
     <script src="script.js"></script>
