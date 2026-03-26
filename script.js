@@ -75,3 +75,146 @@ function windowResized() {
     resizeCanvas(windowWidth, 3580);
     initWaves();
 }
+
+    const pieces = document.querySelectorAll('.piece');
+    const dropZone = document.getElementById('drop-zone');
+    const skullComplete = document.getElementById('skull-complete');
+    let droppedCount = 0;
+    const totalPieces = pieces.length;
+
+    pieces.forEach(piece => {
+        piece.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', e.target.id);
+        });
+    });
+
+    dropZone.addEventListener('dragover', (e) => e.preventDefault());
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const id = e.dataTransfer.getData('text');
+        const draggedPiece = document.getElementById(id);
+        
+        if (draggedPiece && !draggedPiece.classList.contains('dropped')) {
+            draggedPiece.classList.add('dropped'); // Прячем кусок
+            droppedCount++;
+
+            // Если все куски перенесены, показываем целую картинку
+            if (droppedCount === totalPieces) {
+                dropZone.style.border = 'none'; // Убираем рамку
+                skullComplete.classList.remove('hidden'); // Показываем собранный череп
+            }
+        }
+    });
+
+ /* =========================================
+       2. ИГРА В НАПЕРСТКИ (АГНОЗИЯ)
+       ========================================= */
+    const items = Array.from(document.querySelectorAll('.game-item-smooth'));
+    const modal = document.getElementById('game-modal');
+    const taskText = document.getElementById('game-task');
+    const startBtn = document.getElementById('start-game-btn');
+    
+    let targetItem = '';
+    let isPlaying = false;
+    
+    // Позиции в процентах для красивого центрирования (10%, 40%, 70%)
+    const positions = ['10%', '40%', '70%']; 
+
+    items.forEach((item, index) => {
+        item.style.left = positions[index];
+    });
+
+    function startShellGame() {
+        // Убеждаемся, что блюр снят перед началом новой игры, если это перезапуск
+        items.forEach(item => {
+            item.classList.remove('is-blurred', 'is-guessing');
+        });
+
+        const targets = ['cat', 'lamp', 'hat'];
+        const names = {'cat': 'Кота', 'lamp': 'Лампу', 'hat': 'Шляпу'};
+        targetItem = targets[Math.floor(Math.random() * targets.length)];
+        taskText.innerText = `Найди: ${names[targetItem]}`;
+        modal.classList.remove('hidden');
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+        if(entries[0].isIntersecting && !isPlaying && modal.classList.contains('hidden')) {
+            startShellGame();
+        }
+    });
+    observer.observe(document.querySelector('.game-area-smooth'));
+
+    startBtn.addEventListener('click', () => {
+        modal.classList.add('hidden');
+        isPlaying = true;
+        
+        // Накладываем жесткий блюр на время анимации (без возможности клика)
+        items.forEach(item => item.classList.add('is-blurred'));
+
+        let shuffles = 0;
+        const shuffleInterval = setInterval(() => {
+            let shuffledPositions = [...positions].sort(() => Math.random() - 0.5);
+            
+            items.forEach((item, index) => {
+                item.style.left = shuffledPositions[index];
+            });
+            shuffles++;
+
+            if(shuffles >= 6) { 
+                clearInterval(shuffleInterval);
+                setTimeout(() => {
+                    // Анимация закончилась. Оставляем блюр, но разрешаем кликать!
+                    items.forEach(item => {
+                        item.classList.remove('is-blurred');
+                        item.classList.add('is-guessing');
+                        item.addEventListener('click', checkWin);
+                    });
+                }, 600);
+            }
+        }, 800);
+    });
+
+    function checkWin(e) {
+        if(!isPlaying) return;
+        isPlaying = false; // Блокируем двойные клики
+
+        // Игрок сделал выбор! Снимаем блюр со ВСЕХ предметов, чтобы он увидел результат
+        items.forEach(item => {
+            item.classList.remove('is-guessing');
+            item.removeEventListener('click', checkWin);
+        });
+
+        // Проверяем
+        if(e.currentTarget.getAttribute('data-id') === targetItem) {
+            // Небольшая задержка, чтобы юзер успел увидеть разблюренный предмет перед алертом
+            setTimeout(() => alert('Верно! Это то, что нужно. Знаменитый случай невролога Оливера Сакса. Музыкант-профессионал с агнозией (неспособностью узнавать объекты) пытался надеть на голову собственную жену, приняв её за головной убор'), 300);
+        } else {
+            setTimeout(() => alert('Ошибка! Ты выбрал не тот предмет. Знаменитый случай невролога Оливера Сакса. Музыкант-профессионал с агнозией (неспособностью узнавать объекты) пытался надеть на голову собственную жену, приняв её за головной убор'), 300);
+        }
+        
+        // Перезапуск через 2 секунды после результата
+        setTimeout(startShellGame, 2000);
+    }
+    /* =========================================
+       3. РАСПУТЫВАНИЕ КЛУБКА (ТЕРАПИЯ) - Эффект вытягивания
+       ========================================= */
+    const tangleSvg = document.getElementById('tangle-svg');
+    const straightSvg = document.getElementById('straight-svg');
+    const tangleContainer = document.getElementById('tangle-container');
+    
+    let clickCount = 0;
+    const maxClicks = 5;
+
+    tangleContainer.addEventListener('click', () => {
+        if(clickCount < maxClicks) {
+            clickCount++;
+            
+            // Клубок бледнеет
+            tangleSvg.style.opacity = 1 - (clickCount / maxClicks);
+            
+            // Прямая линия "рисуется" (уменьшаем clip-path inset справа)
+            const revealPercentage = 100 - (clickCount * (100 / maxClicks));
+            straightSvg.style.clipPath = `inset(0 ${revealPercentage}% 0 0)`;
+        }
+    });
