@@ -25,6 +25,7 @@ canvas {
     position: relative;
     gap: 0px;
 
+
 }
 .cherep{
     font-size: 15vh;
@@ -43,7 +44,9 @@ canvas {
     overflow: hidden;
 }
 
-
+.screen-1{
+    justify-content: center;
+}
 .screen-2 {
     justify-content: space-between;
     display: flex;
@@ -80,7 +83,7 @@ canvas {
     justify-content: center;
     flex-direction: column;
 }
-.agnosia-bg-text {
+.bg-text {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -94,38 +97,28 @@ canvas {
 }
 .game-area-smooth {
     position: relative;
-    z-index: 10; /* Поверх текста */
+    z-index: 10; 
     width: 80%;
     height: 300px;
 }
-/* Предметы */
+
 .game-item-smooth {
     position: absolute;
-    width: 25%; /* Кот, лампа и шляпа большие, как на макете */
+    width: 25%;
     top: 50%;
     transform: translateY(-50%);
     transition: left 0.6s ease-in-out, filter 0.5s ease;
     cursor: pointer;
 }
 .game-item-smooth img { width: 100%; }
-.is-blurred { filter: blur(40px); pointer-events: none; } /* Клик заблокирован во время анимации */
-.is-guessing { filter: blur(40px); pointer-events: auto; } /* Блюр есть, кликать можно! */
+.is-blurred { filter: blur(40px); pointer-events: none; } 
+.is-guessing { filter: blur(40px); pointer-events: auto; } 
 
-/* --- ЭКРАН 4: ТЕРАПИЯ (Клубок) --- */
 .screen-4 {
     justify-content: center;
     flex-direction: column;
 }
-.therapy-bg-text {
-    position: absolute;
-    top: 20%;
-    width: 100%;
-    text-align: center;
-    font-size: 4vw;
-    color: transparent;
-    -webkit-text-stroke: 1px #000;
-    z-index: 1;
-}
+
 .tangle-container {
     position: relative;
     z-index: 10;
@@ -139,7 +132,6 @@ canvas {
     width: 100%;
 }
 
-/* Оформление модалки и кнопки */
 .modal { 
     position: relative; 
     background: #000; 
