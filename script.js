@@ -75,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const skullComplete = document.getElementById('skull-complete');
     let droppedCount = 0;
     const totalPieces = pieces.length;
+    const cherepModal = document.getElementById('cherep-modal');
 
     pieces.forEach(piece => {
         piece.addEventListener('dragstart', (e) => {
@@ -96,7 +97,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (droppedCount === totalPieces) {
                     dropZone.style.border = 'none'; 
-                    if(skullComplete) skullComplete.classList.remove('hidden'); 
+                    if(skullComplete)
+                    {
+                        skullComplete.classList.remove('hidden'); 
+                        cherepModal.classList.remove('hidden');
+                    }
                 }
             }
         });
