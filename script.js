@@ -219,6 +219,7 @@ targetItem = targets[Math.floor(Math.random() * targets.length)];
     }
 
     const tangleContainer = document.getElementById('tangle-container');
+    const therapyModal = document.getElementById('therapy-modal');
     if(tangleContainer) {
         const tangleSketch = (p) => {
             let points = [];
@@ -228,6 +229,8 @@ targetItem = targets[Math.floor(Math.random() * targets.length)];
             
             let clickCount = 0;
             const maxClicks = 3;    
+            let modalShown = false;
+            let resetTimerStarted = false;
 
             p.setup = () => {
                 let h = tangleContainer.clientHeight > 0 ? tangleContainer.clientHeight : 400;
@@ -272,6 +275,24 @@ targetItem = targets[Math.floor(Math.random() * targets.length)];
                     p.vertex(x, y);
                 }
                 p.endShape();
+
+                if (targetProgress === 1 && pullProgress > 0.99) {
+                    if (!modalShown) {
+                        modalShown = true;
+                        if (therapyModal) therapyModal.classList.remove('hidden');
+                    }
+                    if (!resetTimerStarted) {
+                        resetTimerStarted = true;
+                        setTimeout(() => {
+                            clickCount = 0;
+                            targetProgress = 0;
+                            modalShown = false;
+                            resetTimerStarted = false;
+                            if (therapyModal) therapyModal.classList.add('hidden');
+                            generatePoints();
+                        }, 5000);
+                    }
+                }
             };
 
             p.mousePressed = () => {
